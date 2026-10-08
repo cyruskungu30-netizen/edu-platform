@@ -135,7 +135,7 @@ export default function Footer() {
                   <span className="break-all pt-2">support@edumarket.co.ke</span>
                 </a>
 
-                <a href="tel:+254795083575" className="group flex items-center gap-3 text-sm text-slate-400 transition hover:text-white">
+                <a href="tel:+254758788674" className="group flex items-center gap-3 text-sm text-slate-400 transition hover:text-white">
                   <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-emerald-400">
                     <Phone size={17} />
                   </span>
