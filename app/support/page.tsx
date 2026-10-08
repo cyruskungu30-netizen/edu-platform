@@ -1,11 +1,11 @@
-import Link from "next/link";
+ import Link from "next/link";
+import { connection } from "next/server";
 import {
   ArrowLeft,
   CheckCircle2,
   Clock3,
   Headphones,
   MessageCircle,
-  Plus,
   Ticket,
 } from "lucide-react";
 import { Suspense } from "react";
@@ -23,26 +23,28 @@ type SupportTicket = {
 };
 
 function formatDate(value: string) {
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return "Date unavailable";
+  }
+
   return new Intl.DateTimeFormat("en-KE", {
     dateStyle: "medium",
     timeStyle: "short",
-  }).format(new Date(value));
+  }).format(date);
 }
 
 function getStatusLabel(status: string) {
   switch (status) {
     case "open":
       return "Open";
-
     case "pending":
       return "Pending";
-
     case "resolved":
       return "Resolved";
-
     case "closed":
       return "Closed";
-
     default:
       return status;
   }
@@ -52,16 +54,12 @@ function getStatusClasses(status: string) {
   switch (status) {
     case "open":
       return "bg-blue-50 text-blue-700";
-
     case "pending":
       return "bg-amber-50 text-amber-700";
-
     case "resolved":
       return "bg-emerald-50 text-emerald-700";
-
     case "closed":
       return "bg-slate-100 text-slate-600";
-
     default:
       return "bg-slate-100 text-slate-600";
   }
@@ -72,10 +70,8 @@ function getStatusIcon(status: string) {
     case "resolved":
     case "closed":
       return <CheckCircle2 className="h-4 w-4" />;
-
     case "pending":
       return <Clock3 className="h-4 w-4" />;
-
     default:
       return <MessageCircle className="h-4 w-4" />;
   }
@@ -90,8 +86,7 @@ function SupportLoading() {
         <div className="mt-6 grid gap-8 lg:grid-cols-[1fr_390px]">
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
             <div className="h-8 w-64 animate-pulse rounded bg-slate-200" />
-
-            <div className="mt-3 h-4 w-80 animate-pulse rounded bg-slate-100" />
+            <div className="mt-3 h-4 w-80 max-w-full animate-pulse rounded bg-slate-100" />
 
             <div className="mt-8 space-y-3">
               <div className="h-28 animate-pulse rounded-2xl bg-slate-100" />
@@ -108,6 +103,9 @@ function SupportLoading() {
 }
 
 async function SupportContent() {
+  // Wait until a request is available before accessing dynamic data.
+  await connection();
+
   const supabase = await createClient();
 
   const {
@@ -146,9 +144,7 @@ async function SupportContent() {
 
   const { data: tickets, error } = await supabase
     .from("support_tickets")
-    .select(
-      "id, subject, message, status, created_at, updated_at",
-    )
+    .select("id, subject, message, status, created_at, updated_at")
     .eq("user_id", user.id)
     .order("created_at", { ascending: false });
 
@@ -196,7 +192,6 @@ async function SupportContent() {
                     <p className="text-lg font-black text-slate-950">
                       {typedTickets.length}
                     </p>
-
                     <p className="text-[10px] font-bold uppercase tracking-wide text-slate-400">
                       Tickets
                     </p>
@@ -206,7 +201,6 @@ async function SupportContent() {
                     <p className="text-lg font-black text-blue-700">
                       {openTickets}
                     </p>
-
                     <p className="text-[10px] font-bold uppercase tracking-wide text-blue-500">
                       Active
                     </p>
@@ -221,7 +215,6 @@ async function SupportContent() {
                   <p className="text-sm font-semibold text-red-700">
                     We could not load your support tickets.
                   </p>
-
                   <p className="mt-1 text-xs text-red-600">
                     Please refresh the page and try again.
                   </p>
@@ -237,7 +230,7 @@ async function SupportContent() {
                   </h2>
 
                   <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">
-                    You haven't contacted support yet. If you need help,
+                    You haven&apos;t contacted support yet. If you need help,
                     create your first support ticket.
                   </p>
                 </div>
@@ -300,8 +293,7 @@ async function SupportContent() {
 
               <p className="mt-1 text-sm leading-6 text-emerald-800">
                 Include your order number, payment details or resource name
-                where relevant. This helps our team resolve your issue
-                faster.
+                where relevant. This helps our team resolve your issue faster.
               </p>
             </div>
           </div>
