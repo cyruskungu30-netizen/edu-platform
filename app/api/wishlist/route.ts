@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+﻿ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
 export const runtime = "nodejs";
@@ -6,8 +6,6 @@ export const runtime = "nodejs";
 export async function GET() {
 try {
 const supabase = await createClient();
-
-```
 const {
   data: { user },
   error: authError,
@@ -36,26 +34,18 @@ if (error) {
 }
 
 return NextResponse.json({ items: data ?? [] });
-```
-
 } catch (error) {
 console.error("Wishlist request failed:", error);
-
-```
 return NextResponse.json(
   { error: "An unexpected error occurred." },
   { status: 500 },
 );
-```
-
 }
 }
 
 export async function POST(request: Request) {
 try {
 const supabase = await createClient();
-
-```
 const {
   data: { user },
   error: authError,
@@ -92,7 +82,10 @@ const { data: resource, error: resourceError } = await supabase
   .maybeSingle();
 
 if (resourceError) {
-  console.error("Wishlist resource lookup failed:", resourceError.message);
+  console.error(
+    "Wishlist resource lookup failed:",
+    resourceError.message,
+  );
 
   return NextResponse.json(
     { error: "Unable to verify this resource." },
@@ -131,7 +124,10 @@ if (existing) {
     .eq("user_id", user.id);
 
   if (deleteError) {
-    console.error("Wishlist removal failed:", deleteError.message);
+    console.error(
+      "Wishlist removal failed:",
+      deleteError.message,
+    );
 
     return NextResponse.json(
       { error: "Unable to remove this resource." },
@@ -171,17 +167,12 @@ return NextResponse.json(
   },
   { status: 201 },
 );
-```
-
 } catch (error) {
 console.error("Wishlist update failed:", error);
-
-```
 return NextResponse.json(
   { error: "An unexpected error occurred." },
   { status: 500 },
 );
-```
+}
+}
 
-}
-}
